@@ -172,11 +172,3 @@ dashboard/ecommerce_dashboard.xlsx
    - `product_category_name_translation.csv`
 3. Rerun the notebook or `scripts/run_analysis.py`.
 4. Refresh the dashboard tables/charts or rebuild the Excel dashboard.
-
-## Suggested Portfolio Title
-
-**E-commerce Business Analytics: Sales, Delivery, Review & Customer Insights**
-
-## Suggested CV Summary
-
-Built an end-to-end e-commerce analytics project using SQL, Python, and Excel Dashboard to analyze 100K+ marketplace orders, identify revenue drivers, evaluate delivery performance, and develop business recommendations to improve customer satisfaction.

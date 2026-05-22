@@ -130,9 +130,6 @@ ecommerce-business-analytics/
 ├── sql/
 │   └── ecommerce_analysis.sql
 │
-├── dashboard/
-│   └── ecommerce_dashboard.xlsx
-│
 ├── images/
 │   └── dashboard_professional_preview.png
 │
@@ -140,4 +137,5 @@ ecommerce-business-analytics/
 │   └── executive_summary.pdf
 │
 ├── requirements.txt
+├── ecommerce_dashboard.xlsx
 └── README.md

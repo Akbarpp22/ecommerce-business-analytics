@@ -1,141 +1,149 @@
 # E-commerce Business Analytics Dashboard
 
-## Project Overview
+An end-to-end analytics project on marketplace data, covering sales performance, customer distribution, delivery quality, payment behavior, seller performance, and customer review scores. Built to practice the full workflow of a Data/Reporting Analyst: cleaning raw transactional data, calculating business KPIs, and turning the numbers into a dashboard and actionable recommendations.
 
-This project is an end-to-end data analytics portfolio project that analyzes marketplace performance across sales, customer location, product categories, delivery performance, payment methods, seller performance, and customer review scores.
+## Data Note
 
-The main objective of this project is to identify business opportunities, operational issues, and actionable recommendations that can help improve revenue and customer satisfaction.
+The raw CSV files in `data/raw/` are synthetic data generated with the same table structure as the public Olist Brazilian E-Commerce dataset (orders, customers, products, sellers, payments, reviews). I used synthetic data instead of the original Kaggle files so the project could stay lightweight and shareable in this repo. The full pipeline (Python cleaning, SQL queries, Excel dashboard) is written to work with the real dataset too. See "Using the Original Olist Data" below if you want to reproduce it with real numbers.
 
-This project simulates a real Data Analyst workflow, starting from data preparation, data cleaning, feature engineering, SQL-based KPI analysis, dashboard development, and business insight generation.
+Reference dataset: [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) (Kaggle).
 
-## Business Objective
+## Business Questions
 
-The analysis focuses on answering the following business questions:
+1. What's the monthly revenue trend?
+2. Which product categories bring in the most revenue?
+3. Which customer states generate the highest revenue?
+4. How does late delivery relate to review score?
+5. Which payment methods are most used?
+6. Which sellers need closer monitoring based on revenue, review score, and delivery performance?
+7. What actions can improve revenue and customer satisfaction?
 
-1. How is monthly revenue trending over time?
-2. Which product categories generate the highest revenue?
-3. Which customer locations contribute the most revenue?
-4. How does delivery performance affect customer review scores?
-5. Which payment methods are most commonly used?
-6. Which sellers should be monitored based on revenue, review score, and delivery performance?
-7. What business recommendations can be made to improve revenue and customer satisfaction?
+## Tools
 
-## Tools Used
+- **Python (Pandas, NumPy)**: cleaning and joining 7 relational tables (orders, customers, products, sellers, payments, order items, reviews), plus feature engineering (delivery days, late delivery flag, revenue, AOV)
+- **Matplotlib**: supporting charts (monthly revenue trend, top categories, delivery vs. review score, top states, payment mix)
+- **SQL**: KPI queries (total revenue, delivered orders, top categories, late delivery rate)
+- **Excel**: the dashboard itself, fully formula-driven
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- SQL
-- Microsoft Excel
-- GitHub
+### About the Excel dashboard
 
-## Dataset
+Every number in `dashboard/ecommerce_dashboard.xlsx` is a live formula, not a pasted value. The `Data_*` sheets hold the cleaned data exported from the Python pipeline; every other sheet calculates from there using `SUM`, `SUMPRODUCT`, `INDEX`/`MATCH`, `LARGE`, and `RANK`. There are two interactive lookup panels (`Category_Lookup`, `Seller_Lookup`) where you pick an item from a dropdown and its metrics update automatically. I used `INDEX`/`MATCH` instead of `XLOOKUP` since it works across older Excel versions too, not just Excel 365.
 
-This project uses Olist-style e-commerce transactional data with a relational structure similar to a marketplace database.
+## Repository Structure
 
-The dataset includes several business entities:
-
-- Orders
-- Customers
-- Products
-- Sellers
-- Order items
-- Payments
-- Reviews
-- Product category translation
-
-For portfolio reproducibility, the current version uses synthetic e-commerce data with the same table structure as the public Olist Brazilian E-commerce dataset. The workflow can be applied to the original Olist dataset by replacing the CSV files inside the `data/raw/` folder.
-
-Dataset reference:
-
-- Olist Brazilian E-commerce Public Dataset: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce
-
-## Project Workflow
-
-The project follows this analytics process:
-
-1. Import raw CSV files
-2. Understand table relationships
-3. Clean and transform the data
-4. Create new analytical features
-5. Join multiple tables into one analysis-ready dataset
-6. Calculate business KPIs using Python and SQL
-7. Build summary tables
-8. Create an Excel dashboard
-9. Generate business insights
-10. Provide business recommendations
+```text
+ecommerce_business_analytics_portfolio/
+│
+├── data/
+│   ├── raw/                         # Olist-style raw CSV files
+│   └── cleaned/                     # Cleaned analytical datasets and summary tables
+│
+├── notebooks/
+│   └── 01_ecommerce_data_cleaning_eda.ipynb
+│
+├── sql/
+│   └── ecommerce_analysis.sql
+│
+├── dashboard/
+│   └── ecommerce_dashboard.xlsx
+│
+├── images/
+│   ├── dashboard_screenshot.png
+│   ├── monthly_revenue_trend.png
+│   ├── top_categories_by_revenue.png
+│   ├── late_delivery_by_review_score.png
+│   ├── top_states_by_revenue.png
+│   └── orders_by_payment_type.png
+│
+├── reports/
+│   ├── executive_summary.md
+│   └── executive_summary.pdf
+│
+├── scripts/
+│   └── run_analysis.py
+│
+└── README.md
+```
 
 ## Key Metrics
 
 | Metric | Value |
 |---|---:|
-| Total Revenue | 17.90M |
-| Delivered Orders | 96.55K |
-| Unique Customers | 96.55K |
+| Total Revenue | 17,900,525.67 |
+| Delivered Orders | 96,551 |
+| Unique Customers | 96,551 |
 | Average Order Value | 185.40 |
 | Average Review Score | 3.83 |
 | Late Delivery Rate | 24.18% |
 | Average Delivery Days | 9.15 |
 
+## Findings
+
+Revenue is concentrated in a handful of categories. `computers_accessories` alone brings in 1,685,925.43, the highest of any category, followed by `watches_gifts` and `health_beauty`. That's worth keeping in mind for stock planning and campaign prioritization.
+
+Late delivery tracks closely with lower review scores. Orders with review scores of 1-3 show a noticeably higher late delivery rate than orders scored 4-5, so delivery performance looks like one of the clearest levers on customer satisfaction here.
+
+SP, RJ, and MG drive most of the revenue, with SP alone accounting for 7,350,781.42, more than three times the next closest state. Logistics and marketing spend both make sense to prioritize around these states first.
+
+Revenue and delivery quality don't always move together at the seller level either. A few sellers rank high on revenue but still carry elevated late delivery rates or lower review scores, the kind of gap a seller scorecard is meant to catch.
+
+## Recommendations
+
+1. Prioritize high-revenue categories for campaigns, stock planning, and seller quality checks.
+2. Track seller SLA and high-delay routes weekly to bring down the late delivery rate.
+3. Focus marketing spend on the top revenue states while testing smaller campaigns in lower-penetration ones.
+4. Build a seller performance tiering system using revenue, late delivery rate, review score, and order volume together.
+5. Use the dashboard as a recurring (weekly/monthly) review tool for revenue, orders, review score, and delivery KPIs.
+
 ## Dashboard Preview
 
-![Dashboard Preview](images/dashboard_professional_preview.png)
+![Dashboard Preview](images/dashboard_screenshot.png)
 
-## Key Insights
+## Charts
 
-### 1. Revenue is concentrated in several major product categories
+### Monthly Revenue Trend
+![Monthly Revenue Trend](images/monthly_revenue_trend.png)
 
-The analysis shows that a few product categories contribute significantly to total revenue. The highest revenue category is `computers_accessories`.
+### Top Categories by Revenue
+![Top Categories by Revenue](images/top_categories_by_revenue.png)
 
-This indicates that high-performing categories should be prioritized for campaign planning, stock management, and seller performance monitoring.
+### Late Delivery by Review Score
+![Late Delivery by Review Score](images/late_delivery_by_review_score.png)
 
-### 2. SP is the highest revenue-generating customer state
+## Reproducing This
 
-Customer revenue is highly concentrated in major states, especially SP. This suggests that regional marketing and logistics optimization should focus on high-demand areas first.
+1. Clone or download this repo.
+2. Install dependencies:
 
-### 3. Late delivery is associated with lower customer review scores
+```bash
+pip install pandas numpy matplotlib
+```
 
-Orders with lower review scores tend to have higher late delivery rates. This shows that delivery performance plays an important role in customer satisfaction.
+3. Run the notebook:
 
-### 4. Seller performance should be monitored beyond revenue
+```bash
+jupyter notebook notebooks/01_ecommerce_data_cleaning_eda.ipynb
+```
 
-A seller may generate high revenue but still have delivery or review issues. Therefore, seller performance should be evaluated using multiple metrics such as revenue, order volume, review score, and late delivery rate.
+or the script directly:
 
-## Business Recommendations
+```bash
+python scripts/run_analysis.py
+```
 
-Based on the analysis, the recommended business actions are:
+4. Open `dashboard/ecommerce_dashboard.xlsx` to explore the live dashboard.
 
-1. Prioritize high-revenue product categories for marketing campaigns and inventory planning.
-2. Monitor late delivery rate regularly to improve customer satisfaction.
-3. Focus regional marketing and logistics improvement on top revenue states.
-4. Create a seller performance scorecard using revenue, review score, order volume, and delivery performance.
-5. Use the dashboard as a weekly business review tool for sales, delivery, and customer satisfaction monitoring.
+## Using the Original Olist Data
 
-## Repository Structure
-
-```text
-ecommerce-business-analytics/
-│
-├── data/
-│   ├── raw/
-│   └── cleaned/
-│
-├── notebooks/
-│   └── 01_ecommerce_data_cleaning_eda.ipynb
-│
-├── scripts/
-│   └── run_analysis.py
-│
-├── sql/
-│   └── ecommerce_analysis.sql
-│
-├── images/
-│   └── dashboard_professional_preview.png
-│
-├── reports/
-│   └── executive_summary.pdf
-│
-├── requirements.txt
-├── ecommerce_dashboard.xlsx
-└── README.md
+1. Download the [Brazilian E-Commerce Public Dataset by Olist](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) from Kaggle.
+2. Replace the files in `data/raw/` with the original ones:
+   - `olist_customers_dataset.csv`
+   - `olist_order_items_dataset.csv`
+   - `olist_order_payments_dataset.csv`
+   - `olist_order_reviews_dataset.csv`
+   - `olist_orders_dataset.csv`
+   - `olist_products_dataset.csv`
+   - `olist_sellers_dataset.csv`
+   - `product_category_name_translation.csv`
+3. Rerun the notebook or `scripts/run_analysis.py`.
+4. Update the `Data_*` sheets in the Excel dashboard with the new cleaned data, and everything downstream recalculates automatically.
